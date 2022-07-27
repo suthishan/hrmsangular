@@ -1,0 +1,340 @@
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Conference List</h3>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <a class="btn add-btn" (click)="onGoToPage2()" data-toggle="modal" data-target="#add_list"><i class="fa fa-plus"></i> Conference Room Booking</a>
+                    
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" id="datatable"
+                    class="table table-striped custom-table mb-0 datatable">
+                    <thead>
+                        <tr>
+                            <!-- <th>id</th> -->
+                            <th>Emp Code</th>
+                            <th>Emp Name</th>
+                            <th>Date of Booking</th>
+                            <th>Time of Booking</th>
+                            <th>Conference</th>
+                            <th>Purpose of Meeting</th>
+                            <th>Meeting Type</th>
+                            <!-- <th class="text-right">Action</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr *ngFor="let item of lstconference;let i = index">
+                            <!-- <td>{{item.id}}</td> -->
+                            <td>{{item.emp_id}}</td>
+                            <td>{{item.emp_name}}</td>
+                            <td>{{item.Event_Date}}</td>
+                            <!-- <td>{{item.Event_Time}}</td> -->
+                            <td>{{item.Select_Time}}/{{item.Duration_hours}}:{{item.Duration_Minutes}}</td>
+                           <td>{{item.Conference_Hall}}</td>
+                            <td>{{item.purpose_of_meeting}}</td>
+                            <td>{{item.meeting_type}}</td>
+
+                            <!-- <td class="text-right">
+                                <div class="dropdown dropdown-action">
+                                    <a class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                        aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#edit_list"
+                                            (click)="edit(item.id)"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#delete_list"
+                                            (click)="tempId =item.id"><i class="fa fa-trash-o m-r-5"></i>
+                                            Delete</a>
+                                    </div>
+                                </div>
+                            </td> -->
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+
+<!-- Add Termination Modal -->
+<div id="add_list" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Conference Room Booking</h5>
+                <!-- <button type="button" (click)="onGoToPage2()" class="close" data-dismiss="modal" aria-label="Close" (click)="openContent(false)">
+                    <span aria-hidden="true">&times;</span>
+                </button> -->
+            </div>
+            <div class="container">
+                <form  [formGroup]="addConfereForm" (ngSubmit)="addConferenceData()">
+                           
+                            <div class="form-group">
+                                  <label>Select Date  <span class="text-danger">*</span></label>
+                                  <div class="cal-icon">
+                                    <input class="form-control datetimepicker" type="text" bsDatepicker type="text"
+                                    [minDate]="minDate" [maxDate]="maxDate" [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY',  returnFocusToInput: true }"
+                                        [class.invalid]="addConfereForm.get('Event_date').invalid && addConfereForm.get('Event_date').touched"
+                                        formControlName="Event_date">
+                                </div> 
+                            <div *ngIf="addConfereForm.get('Event_date').invalid && addConfereForm.get('Event_date').touched">
+                                <small *ngIf="addConfereForm.get('Event_date').invalid && addConfereForm.get('Event_date').touched"
+                                    class="text-danger"> *Date is required</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Conference<span class="text-danger">*</span></label>
+                            <select class="form-control select" name="Conference_Hall"
+                            [class.invalid]="addConfereForm.get('Conference_Hall').invalid && addConfereForm.get('Conference_Hall').touched"
+                            formControlName="Conference_Hall" (change) = 'floorchange()'>
+                                <option value="1">1st Floor</option>
+                                <option value="3">3rd Floor</option>
+                            </select>
+        
+                            <div *ngIf="addConfereForm.get('Conference_Hall').invalid && addConfereForm.get('Conference_Hall').touched">
+                                        <small
+                                            *ngIf="addConfereForm.get('Conference_Hall').invalid && addConfereForm.get('Conference_Hall').touched"
+                                            class="text-danger"> *Conference Floor is required</small>
+                                    </div>
+                        </div>
+                        
+                     <!-- <div class="form-group">
+                        <label>Available Timings<span class="text-danger">*</span></label>
+                        <br>
+                        <div class="dflex">
+                        <label class="available_date" formArrayName="Event_Time" *ngFor="let Event_Time of timeFormArray.controls; let i = index">
+                           <input type="checkbox" [formControlName]="i" />
+                          
+                            {{eventtimedata[i].name}}
+                   </label>
+                    </div> -->
+                        <!-- </div>   -->
+                        
+                            
+                               
+                            <div class="row">   
+                            <div class="col-md-6 col-sm-6 col-6">
+                                <label>Start Time<span class="text-danger">*</span></label>
+                                <div class="form-group">
+                                    <select class="form-control select" name="Select_Time"
+                                    [class.invalid]="addConfereForm.get('Select_Time').invalid && addConfereForm.get('Select_Time').touched"
+                                    formControlName="Select_Time" (change)="updateDate()">
+                                        <option value="08.00">08.00</option>
+                                        <option value="08.15">08.15</option>
+                                        <option value="08.30">08.30</option>
+                                        <option value="08.45">08.45</option>
+                                        <option value="09.00">09.00</option>
+                                        <option value="09.15">09.15</option>
+                                        <option value="09.30">09.30</option>
+                                        <option value="09.45">09.45</option>
+                                        <option value="10.00">10.00</option>
+                                        <option value="10.15">10.15</option>
+                                        <option value="10.30">10.30</option>
+                                        <option value="10.45">10.45</option>
+                                        <option value="11.00">11.00</option>
+                                        <option value="11.15">11.15</option>
+                                        <option value="11.30">11.30</option>
+                                        <option value="11.45">11.45</option>
+                                        <option value="12.00">12.00</option>
+                                        <option value="12.15">12.15</option>
+                                        <option value="12.30">12.30</option>
+                                        <option value="12.45">12.45</option>
+                                        <option value="01.00">01.00</option>
+                                        <option value="01.15">01.15</option>
+                                        <option value="01.30">01.30</option>
+                                        <option value="01.45">01.45</option>
+                                        <option value="02.00">02.00</option>
+                                        <option value="02.15">02.15</option>
+                                        <option value="02.30">02.30</option>
+                                        <option value="02.45">02.45</option>
+                                        <option value="03.00">03.00</option>
+                                        <option value="03.15">03.15</option>
+                                        <option value="03.30">03.30</option>
+                                        <option value="03.45">03.45</option>
+                                        <option value="04.00">04.00</option>
+                                        <option value="04.15">04.15</option>
+                                        <option value="04.30">04.30</option>
+                                        <option value="04.45">04.45</option>
+                                        <option value="05.00">05.00</option>
+                                        <option value="05.15">05.15</option>
+                                        <option value="05.30">05.30</option>
+                                        <option value="05.45">05.45</option>
+                                        <option value="06.00">06.00</option>
+                                        <option value="06.15">06.15</option>
+                                        <option value="06.30">06.30</option>
+                                        <option value="06.45">06.45</option>
+                                        <option value="07:00">07:00</option>
+                                        <option value="07:15">07:15</option>
+                                        <option value="07:30">07:30</option>
+                                        <option value="07:45">07:45</option>
+                                        <option value="08:00">08:00</option>
+                                        <option value="08:15">08:15</option>
+                                        <option value="08:30">08:30</option>
+                                        <option value="08:45">08:45</option>
+                                        <option value="09:00">09:00</option>
+                                     </select>
+                                     <div *ngIf="addConfereForm.get('Select_Time').invalid && addConfereForm.get('Select_Time').touched">
+                                     <small
+                                         *ngIf="addConfereForm.get('Select_Time').invalid && addConfereForm.get('Select_Time').touched"
+                                         class="text-danger"> *Start Time is required</small>
+                                    </div>
+                              </div>
+                              <div *ngIf="slotError" class="alert alert-danger">{{ slotError.message }}</div>
+                              <div *ngIf="slotsuccess" class="alert alert-success">{{ slotsuccess.message }}</div>
+                              <div *ngIf="slotError" class="invalid-feedback">
+                                <!-- {{ slotError.message }} -->
+                                <div *ngIf="slotError">{{ slotError.message }}</div>
+                              </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-6">
+                                <div class="form-group">
+                                    <label>Select Session<span class="text-danger">*</span></label>
+                                    <select class="form-control select" name="Select_session"
+                                    [class.invalid]="addConfereForm.get('Select_session').invalid && addConfereForm.get('Select_session').touched"
+                                    formControlName="Select_session" >
+                                        <option value="AM">AM</option>
+                                        <option value="PM">PM</option>
+                                     </select>
+                                     <div
+                                     *ngIf="addConfereForm.get('Select_session').invalid && addConfereForm.get('Select_session').touched">
+                                     <small
+                                         *ngIf="addConfereForm.get('Select_session').invalid && addConfereForm.get('Select_session').touched"
+                                         class="text-danger"> *Select Session is required</small>
+                                 </div>
+                              </div>
+                            </div>
+                            </div>
+                        
+                        
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6 col-6">
+                        <div class="form-group">
+                            <label>Duration (hours)<span class="text-danger">*</span></label>
+                            <select class="form-control select" name="Duration_hours"
+                            [class.invalid]="addConfereForm.get('Duration_hours').invalid && addConfereForm.get('Duration_hours').touched"
+                            formControlName="Duration_hours" >
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="13">13</option>
+                            <option value="14">14</option>
+                            <option value="15">15</option>
+                            <option value="16">16</option>
+                            <option value="18">18</option>
+                            <option value="19">19</option>
+                            <option value="20">20</option>
+                            <option value="21">21</option>
+                            <option value="22">22</option>
+                            <option value="23">23</option>
+                            <option value="24">24</option>
+            </select>
+            <div
+            *ngIf="addConfereForm.get('Duration_hours').invalid && addConfereForm.get('Duration_hours').touched">
+            <small
+                *ngIf="addConfereForm.get('Duration_hours').invalid && addConfereForm.get('Duration_hours').touched"
+                class="text-danger"> *Hours is required</small>
+        </div>
+                        </div> 
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-6">
+                      <div class="form-group">
+                        <label>Minutes<span class="text-danger">*</span></label>
+                        <select class="form-control select" name="Duration_Minutes"
+                        [class.invalid]="addConfereForm.get('Duration_Minutes').invalid && addConfereForm.get('Duration_Minutes').touched"
+                        formControlName="Duration_Minutes">
+                            <option value="0">0</option>
+                            <option value="15">15</option>
+                            <option value="30">30</option>
+                            <option value="45">45</option>
+                        </select>
+                        <div
+                        *ngIf="addConfereForm.get('Duration_Minutes').invalid && addConfereForm.get('Duration_Minutes').touched">
+                        <small
+                            *ngIf="addConfereForm.get('Duration_Minutes').invalid && addConfereForm.get('Duration_Minutes').touched"
+                            class="text-danger"> *Minutes is required</small>
+                    </div>
+                      </div>
+                      </div>
+                      </div>
+                 
+                <div class="form-group">
+                    <label>Meeting Type<span class="text-danger">*</span></label>
+                    <select class="form-control select" name="Meeting_Type" (change)="selection($event)"
+                    [class.invalid]="addConfereForm.get('Meeting_Type').invalid && addConfereForm.get('Meeting_Type').touched"
+                    formControlName="Meeting_Type">
+                        <option value="Internal">Internal Meeting</option>
+                        <option value="External">External Meeting</option>
+                    </select>
+
+                    <div
+                                *ngIf="addConfereForm.get('Meeting_Type').invalid && addConfereForm.get('Meeting_Type').touched">
+                                <small
+                                    *ngIf="addConfereForm.get('Meeting_Type').invalid && addConfereForm.get('Meeting_Type').touched"
+                                    class="text-danger"> *Meeting Type is required</small>
+                            </div>
+                </div>
+
+
+
+             
+
+        <div class="form-group" [hidden]="!option2">
+            <label>Meeting Name<span class="text-danger">*</span></label>
+            
+            <input class="form-control" type="text"
+                [class.invalid]="addConfereForm.get('meeting_name').invalid && addConfereForm.get('meeting_name').touched"
+                formControlName="meeting_name">
+            <div
+                *ngIf="addConfereForm.get('meeting_name').invalid && addConfereForm.get('meeting_name').touched">
+                <small
+                    *ngIf="addConfereForm.get('meeting_name').invalid && addConfereForm.get('meeting_name').touched"
+                    class="text-danger"> *Purpose of Meeting is required</small>
+            </div>
+        </div>
+
+                <div class="form-group">
+                        <label>Purpose of Meeting <span class="text-danger">*</span></label>
+                        
+                        <input class="form-control" type="text"
+                            [class.invalid]="addConfereForm.get('purpose_of_meeting').invalid && addConfereForm.get('purpose_of_meeting').touched"
+                            formControlName="purpose_of_meeting">
+                        <div
+                            *ngIf="addConfereForm.get('purpose_of_meeting').invalid && addConfereForm.get('purpose_of_meeting').touched">
+                            <small
+                                *ngIf="addConfereForm.get('purpose_of_meeting').invalid && addConfereForm.get('purpose_of_meeting').touched"
+                                class="text-danger"> *Purpose of Meeting is required</small>
+                        </div>
+                    </div>
+                     
+                  <div class="form-group">
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" type="submit">Submit</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+        </div>
+    </div>
+</div>
